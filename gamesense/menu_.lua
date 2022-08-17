@@ -1,6 +1,7 @@
 local typeof = type;
 local ui_set_callback, ui_set_visible, ui_get, ui_set = ui.set_callback, ui.set_visible, ui.get, ui.set;
 local table_insert = table.insert;
+local client_set_event_callback = client.set_event_callback;
 local f = string.format;
 
 local menu_mt, menu = {}, {};
@@ -138,9 +139,7 @@ menu.refresh = function()
       end
 
       die(
-        const.exception_errors.protect_response,
-        'menu::refresh',
-        output
+        f('menu::refresh / %s', output)
       );
       ::continue::
     end
@@ -152,10 +151,8 @@ menu.new = function(group, name, method, arguments, parameters)
   end
 
   if menu.prod[ group ][ name ] ~= nil then
-    die(
-      const.exception_errors.already_used_keys,
-      'menu::new',
-      f('group = %s, name = %s', group, name)
+   error
+      f('menu::new / group = %s, name = %s', group, name)
     );
   end
 
@@ -183,10 +180,8 @@ menu.new = function(group, name, method, arguments, parameters)
       output = f('%s, debug info: group = %s, name = %s', output, group, name);
     end
 
-    die(
-      const.exception_errors.protect_response,
-      'menu::new',
-      output
+    error(
+      f('menu::new / %s', output)
     );
   end
 
@@ -210,10 +205,8 @@ menu.new = function(group, name, method, arguments, parameters)
   protect(this.m_reference);
 
   if this.m_parameters.update_per_frame then
-    if callback.get('menu::update') == nil then
-      table_insert(menu.updates, this);
-
-      callback.register('menu::update', 'paint_ui', function()
+    if #menu.updates == 0 then
+      client_set_event_callback('paint_ui', function()
         for k, v in pairs(menu.updates) do
           local value = v:get(true);
         
@@ -226,6 +219,7 @@ menu.new = function(group, name, method, arguments, parameters)
         end
       end);
     end
+    table_insert(menu.updates, this);
   end
 
   return this

@@ -339,21 +339,23 @@ menu.new = function(group, name, method, arguments, parameters)
   protect(this.m_reference);
 
   if this.m_parameters.update_per_frame then
-    if #menu.updates == 0 then
+    table_insert(menu.updates, this);
+    
+    if not callback.get('menu::update_per_frame') then
       callback.new('menu::update_per_frame', 'paint_ui', function()
         for k, v in pairs(menu.updates) do
           local value = v:get(true);
         
           if value == v:get() then
-            return
+            goto skip
           end
         
           v:set(value);
           menu.refresh();
+          ::skip::
         end
       end);
     end
-    table_insert(menu.updates, this);
   end
 
   return this

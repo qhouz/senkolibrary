@@ -113,7 +113,7 @@ menu.override = function(var, ...)
     local handler = function()
       local dir = menu.history[ thread ];
       
-      for k, v in pairs in pairs(dir) do
+      for k, v in pairs(dir) do
         if v.value == nil then      
           if v.backup ~= nil then
             ui_set(k, unpack(v.backup);

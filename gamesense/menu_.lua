@@ -116,7 +116,7 @@ menu.override = function(var, ...)
       for k, v in pairs(dir) do
         if v.value == nil then      
           if v.backup ~= nil then
-            ui_set(k, unpack(v.backup);
+            ui_set(k, unpack(v.backup));
             menu.history[ thread ][ k ] = nil;
           end
           

@@ -1,7 +1,9 @@
+local o_client_set_event_callback = client.set_event_callback;
+
 local typeof = type;
 local ui_set_callback, ui_set_visible, ui_update, ui_get, ui_set = ui.set_callback, ui.set_visible, ui.update, ui.get, ui.set;
 local table_insert = table.insert;
-local client_set_event_callback, client_delay_call = client.set_event_callback, client.delay_call;
+local client_delay_call = client.delay_call;
 local f = string.format;
 
 local thread = 'main';
@@ -19,8 +21,8 @@ client.set_event_callback = function(event_name, callback)
     thread = event_name;
     return callback(...)
   end
-  
-  return client_set_event_callback(event_name, handler);
+    
+  o_client_set_event_callback(event_name, callback);
 end
 
 menu_mt.register_callback = function(self, callback)

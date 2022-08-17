@@ -159,9 +159,7 @@ menu.new = function(group, name, method, arguments, parameters)
     );
   end
 
-  local this = setmetatable({}, {
-    __index = menu_mt
-  };
+  local this = {};
   this.m_group      = group;
   this.m_name       = name;
   this.m_method     = method;
@@ -169,6 +167,10 @@ menu.new = function(group, name, method, arguments, parameters)
   this.m_parameters = parameters or {};
   this.m_grouped    = menu.allow_group;
   this.m_visible    = true;
+  
+  setmetatable(this, {
+    __index = menu_mt
+  });
 
   local createReference = function()
     this.m_reference = this.m_method(unpack(this.m_arguments));

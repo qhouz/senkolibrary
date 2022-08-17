@@ -220,7 +220,7 @@ menu.refresh = function()
         output = f('%s, debug info: group = %s, name = %s', output, y.m_group, y.m_name);
       end
 
-      die(
+      error(
         f('menu::refresh / %s', output)
       );
       ::continue::

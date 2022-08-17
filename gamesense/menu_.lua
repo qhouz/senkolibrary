@@ -4,7 +4,17 @@ local table_insert = table.insert;
 local client_set_event_callback, client_delay_call = client.set_event_callback, client.delay_call;
 local f = string.format;
 
+local thread = 'main';
 local menu_mt, menu = {}, {};
+
+local client_set_event_callback = function(event_name, callback)
+  local handler = function(...)
+    thread = event_name;
+    return callback(...)
+  end
+  
+  client_set_event_callback(event_name, callback);
+end
 
 menu_mt.register_callback = function(self, callback)
   if not callback then
@@ -84,7 +94,11 @@ menu.prod = {};
 menu.binds = {};
 menu.parents = {};
 menu.updates = {};
+menu.history = {};
 
+menu.override = function(var, ...)
+  
+end
 menu.set_visible = function(x, b)
   if typeof(x) == 'table' then
     for k, v in pairs(x) do

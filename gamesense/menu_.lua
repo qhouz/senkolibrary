@@ -229,3 +229,5 @@ menu.new = function(group, name, method, arguments, parameters)
   return this
 end
 menu.register_callback = menu_mt.register_callback;
+
+return menu_mt, menu

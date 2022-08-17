@@ -1,7 +1,7 @@
 local typeof = type;
-local ui_set_callback, ui_set_visible, ui_get, ui_set = ui.set_callback, ui.set_visible, ui.get, ui.set;
+local ui_set_callback, ui_set_visible, ui_update, ui_get, ui_set = ui.set_callback, ui.set_visible, ui.update, ui.get, ui.set;
 local table_insert = table.insert;
-local client_set_event_callback = client.set_event_callback;
+local client_set_event_callback, client_delay_call = client.set_event_callback, client.delay_call;
 local f = string.format;
 
 local menu_mt, menu = {}, {};

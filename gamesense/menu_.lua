@@ -159,8 +159,8 @@ menu.new = function(group, name, method, arguments, parameters)
     );
   end
 
-  local this = class {
-    menu_mt
+  local this = setmetatable({}, {
+    __index = menu_mt
   };
   this.m_group      = group;
   this.m_name       = name;

@@ -313,7 +313,7 @@ client_set_event_callback('shutdown', function()
         goto skip
       end
       
-      ui_set(x, unpack(y.backup);
+      ui_set(x, unpack(y.backup));
       menu.history[ k ][ x ] = nil;
       ::skip::
     end

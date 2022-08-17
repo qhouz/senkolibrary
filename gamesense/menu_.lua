@@ -7,6 +7,13 @@ local f = string.format;
 local thread = 'main';
 local menu_mt, menu = {}, {};
 
+local hotkey_states = {
+    [ 0 ] = 'Always on',
+    'On hotkey',
+    'Toggle',
+    'Off hotkey',
+};
+
 local client_set_event_callback = function(event_name, callback)
   local handler = function(...)
     thread = event_name;
@@ -79,6 +86,9 @@ end
 menu_mt.update = function(self, ...)
   pcall(ui_update, self.m_reference, ...);
 end
+menu_mt.override = function(self, ...)
+  pcall(menu.override, self.m_reference, ...);
+end
 menu_mt.add_as_parent = function(self, callback)
   self.m_parent = true;
 
@@ -97,7 +107,63 @@ menu.updates = {};
 menu.history = {};
 
 menu.override = function(var, ...)
+  if menu.history[ thread ] == nil then
+    menu.history[ thread ] = {};
+    
+    local handler = function()
+      local dir = menu.history[ thread ];
+      
+      for k, v in pairs in pairs(dir) do
+        if v.value == nil then      
+          if v.backup ~= nil then
+            ui_set(k, unpack(v.backup);
+            menu.history[ thread ][ k ] = nil;
+          end
+          
+          goto skip
+        end
+        
+        local value = {ui_get(k)};
+        
+        if v.backup == nil then
+          v.backup = value;
+            
+          if typeof(v.backup) ~= 'table' then
+            goto continue
+          end
+            
+          if typeof(v.backup[ 1 ]) ~= 'boolean' then
+            goto continue
+          end
+            
+          if typeof(v.backup[ 2 ]) ~= 'number' then
+            goto continue
+          end
+          
+          v.backup = {hotkey_states[ v.backup[ 2 ] ]};
+          ::continue::
+        end
+          
+        ui_set(k, unpack(v.value));
+        v.value = nil;
+        ::skip::
+      end
+    end
+    
+    client_set_event_callback(thread, handler);
+  end
   
+  local args = {...};
+  
+  if #args == 0 then
+    return
+  end
+  
+  if menu.history[ thread ][ var ] == nil then
+    menu.history[ thread ][ var ] = {};
+  end
+  
+  menu.history[ thread ][ var ].value = args;
 end
 menu.set_visible = function(x, b)
   if typeof(x) == 'table' then
@@ -240,4 +306,18 @@ menu.new = function(group, name, method, arguments, parameters)
 end
 menu.register_callback = menu_mt.register_callback;
 
+client_set_event_callback('shutdown', function()
+  for k, v in pairs(menu.history) do
+    for x, y in pairs(v) do
+      if y.backup == nil then
+        goto skip
+      end
+      
+      ui_set(x, unpack(y.backup);
+      menu.history[ k ][ x ] = nil;
+      ::skip::
+    end
+  end
+end);
+  
 return menu_mt, menu

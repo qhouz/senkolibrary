@@ -347,11 +347,12 @@ menu.new = function(group, name, method, arguments, parameters)
       callback.new('menu::update_per_frame', 'paint_ui', function()
         for k, v in pairs(menu.updates) do
           if v:get(true) == v:get() then
-            return
+            goto skip
           end
 
           v:set(v:get(true));
           menu.refresh();
+          ::skip::
         end
       end);
     end

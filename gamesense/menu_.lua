@@ -3,6 +3,19 @@ local ui_set_callback, ui_set_visible, ui_get, ui_set = ui.set_callback, ui.set_
 local table_insert = table.insert;
 local f = string.format;
 
+local class = function(parents)
+  local this = {};
+  parents = parents or {};
+
+  for k, v in pairs(parents) do
+    setmetatable(this, {
+      __index = v
+    });
+  end
+
+  return this
+end
+
 local menu_mt, menu = {}, {};
 
 menu_mt.register_callback = function(self, callback)

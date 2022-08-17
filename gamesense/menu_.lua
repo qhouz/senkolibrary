@@ -151,7 +151,7 @@ menu.new = function(group, name, method, arguments, parameters)
   end
 
   if menu.prod[ group ][ name ] ~= nil then
-   error
+   error(
       f('menu::new / group = %s, name = %s', group, name)
     );
   end

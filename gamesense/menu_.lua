@@ -152,7 +152,7 @@ menu.override = function(var, ...)
       end
     end
     
-    client.set_event_callback(thread, handler);
+    o_client_set_event_callback(thread, handler);
   end
   
   local args = {...};

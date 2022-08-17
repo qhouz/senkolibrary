@@ -20,7 +20,7 @@ local client_set_event_callback = function(event_name, callback)
     return callback(...)
   end
   
-  client_set_event_callback(event_name, callback);
+  client_set_event_callback(event_name, handler);
 end
 
 menu_mt.register_callback = function(self, callback)

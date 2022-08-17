@@ -322,4 +322,4 @@ o_client_set_event_callback('shutdown', function()
   end
 end);
   
-return menu_mt, menu
+return menu

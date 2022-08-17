@@ -14,7 +14,7 @@ local hotkey_states = {
     'Off hotkey',
 };
 
-local client_set_event_callback = function(event_name, callback)
+client.set_event_callback = function(event_name, callback)
   local handler = function(...)
     thread = event_name;
     return callback(...)
@@ -150,7 +150,7 @@ menu.override = function(var, ...)
       end
     end
     
-    client_set_event_callback(thread, handler);
+    client.set_event_callback(thread, handler);
   end
   
   local args = {...};

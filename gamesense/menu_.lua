@@ -22,7 +22,7 @@ client.set_event_callback = function(event_name, callback)
     return callback(...)
   end
     
-  o_client_set_event_callback(event_name, callback);
+  o_client_set_event_callback(event_name, handler);
 end
 
 menu_mt.register_callback = function(self, callback)

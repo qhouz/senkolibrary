@@ -308,7 +308,7 @@ menu.new = function(group, name, method, arguments, parameters)
 end
 menu.register_callback = menu_mt.register_callback;
 
-client_set_event_callback('shutdown', function()
+o_client_set_event_callback('shutdown', function()
   for k, v in pairs(menu.history) do
     for x, y in pairs(v) do
       if y.backup == nil then

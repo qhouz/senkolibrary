@@ -1,7 +1,7 @@
 -- originals
 local table_insert = table.insert;
 local client_color_log, client_set_event_callback, client_delay_call = client.color_log, client.set_event_callback, client.delay_call;
-local ui_set_callback, ui_set_visible, ui_update, ui_get, ui_set = ui.set_callback, ui.set_visible, ui.update, ui.get, ui.set;
+local ui_set_callback, ui_set_visible, ui_update, ui_get, ui_set, ui_new_button = ui.set_callback, ui.set_visible, ui.update, ui.get, ui.set, ui.new_button;
 
 -- defines
 local f = string.format;
@@ -117,14 +117,16 @@ menu_mt.get = function(self, refresh)
   end
   
   local protect = function()
-    self.m_value = {ui_get(self.m_reference)};
+    return {ui_get(self.m_reference)}
   end
 
-  if not pcall(protect) then
+  local success, result = pcall(protect);
+
+  if not success then
     return
   end
 
-  return unpack(self.m_value)
+  return unpack(result)
 end
 menu_mt.set = function(self, ...)
   if pcall(ui_set, self.m_reference, ...) then
@@ -167,17 +169,17 @@ menu.updates = {};
 menu.history = {};
 
 menu.override = function(var, ...)
-  if menu.history[ thread ] == nil then
-    menu.history[ thread ] = {};
+  if menu.history[ callback.thread ] == nil then
+    menu.history[ callback.thread ] = {};
     
     local handler = function()
-      local dir = menu.history[ thread ];
+      local dir = menu.history[ callback.thread ];
       
       for k, v in pairs(dir) do
         if v.value == nil then      
           if v.backup ~= nil then
             ui_set(k, unpack(v.backup));
-            menu.history[ thread ][ k ] = nil;
+            menu.history[ callback.thread ][ k ] = nil;
           end
           
           goto skip
@@ -210,7 +212,7 @@ menu.override = function(var, ...)
       end
     end
     
-    callback.new('menu::override::' .. thread, thread, handler);
+    callback.new('menu::override::' .. callback.thread, callback.thread, handler);
   end
   
   local args = {...};
@@ -219,11 +221,11 @@ menu.override = function(var, ...)
     return
   end
   
-  if menu.history[ thread ][ var ] == nil then
-    menu.history[ thread ][ var ] = {};
+  if menu.history[ callback.thread ][ var ] == nil then
+    menu.history[ callback.thread ][ var ] = {};
   end
   
-  menu.history[ thread ][ var ].value = args;
+  menu.history[ callback.thread ][ var ].value = args;
 end
 menu.set_visible = function(x, b)
   if typeof(x) == 'table' then
@@ -340,19 +342,16 @@ menu.new = function(group, name, method, arguments, parameters)
 
   if this.m_parameters.update_per_frame then
     table_insert(menu.updates, this);
-    
+
     if not callback.get('menu::update_per_frame') then
       callback.new('menu::update_per_frame', 'paint_ui', function()
         for k, v in pairs(menu.updates) do
-          local value = v:get(true);
-        
-          if value == v:get() then
-            goto skip
+          if v:get(true) == v:get() then
+            return
           end
-        
-          v:set(value);
+
+          v:set(v:get(true));
           menu.refresh();
-          ::skip::
         end
       end);
     end

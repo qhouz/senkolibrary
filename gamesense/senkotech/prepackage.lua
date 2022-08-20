@@ -227,6 +227,19 @@ menu.override = function(var, ...)
   
   menu.history[ callback.thread ][ var ].value = args;
 end
+menu.shutdown = function()
+  for k, v in pairs(menu.history) do
+    for x, y in pairs(v) do
+      if y.backup == nil then
+        goto skip
+      end
+      
+      ui_set(x, unpack(y.backup));
+      y.backup = nil;
+      ::skip::
+    end
+  end
+end
 menu.set_visible = function(x, b)
   if typeof(x) == 'table' then
     for k, v in pairs(x) do
@@ -362,16 +375,4 @@ menu.new = function(group, name, method, arguments, parameters)
 end
 menu.register_callback = menu_mt.register_callback;
 
-callback.new('menu::shutdown', 'shutdown', function()
-  for k, v in pairs(menu.history) do
-    for x, y in pairs(v) do
-      if y.backup == nil then
-        goto skip
-      end
-      
-      ui_set(x, unpack(y.backup));
-      menu.history[ k ][ x ] = nil;
-      ::skip::
-    end
-  end
-end);
+callback.new('menu::shutdown', 'shutdown', menu.shutdown);
